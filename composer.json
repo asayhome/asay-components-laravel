@@ -1,0 +1,16 @@
+{
+    "name": "asayhome/asay-components-laravel",
+    "description": "Contain api worker for asay-vue-components",
+    "autoload": {
+        "psr-4": {
+            "AsayHome\\AsayComponents\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Abdelrahman Saeed Elhassan",
+            "email": "abdosaeedelhassan@gmail.com"
+        }
+    ],
+    "require": {}
+}

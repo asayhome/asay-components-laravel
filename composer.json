@@ -12,5 +12,12 @@
             "email": "abdosaeedelhassan@gmail.com"
         }
     ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AsayHome\\AsayComponents\\AsayComponentsProvider"
+            ]
+        }
+    },
     "require": {}
 }

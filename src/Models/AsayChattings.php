@@ -16,7 +16,7 @@ class AsayChattings extends Model
         'group',
         'group_id',
         'sender_id',
-        'receivers',
+        'receiver_id',
         'message',
         'atachments'
     ];

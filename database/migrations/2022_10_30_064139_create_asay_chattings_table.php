@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('group');
             $table->unsignedBigInteger('group_id');
             $table->unsignedBigInteger('sender_id');
-            $table->string('receivers');
+            $table->string('receiver_id');
             $table->longText('message');
             $table->string('attachments')->nullable();
             $table->timestamps();

@@ -20,4 +20,9 @@ class AsayChattings extends Model
         'message',
         'atachments'
     ];
+
+    public function sender()
+    {
+        return $this->hasOne(UserModel::class, 'id', 'sender_id');
+    }
 }

@@ -10,9 +10,12 @@ class ChattingController
 {
     public function getMessages()
     {
-        $messages = AsayChattings::where('group', Request::get('group'))
+        $messages = AsayChattings::with(['sender'])->where('group', Request::get('group'))
             ->where('group_id', Request::get('group_id'))
-            ->get();
+            ->get()->map(function ($message) {
+                $message->created_time = $message->created_at->format('Y-m-d H:i:s');
+                return $message;
+            });
         return response([
             'success' => true,
             'messages' => $messages

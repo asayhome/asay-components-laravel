@@ -21,3 +21,12 @@ Route::group([
     Route::post('getReceivers', [AlertsController::class, 'getReceivers'])->name('getReceivers');
     Route::post('sendAlert', [AlertsController::class, 'sendAlert'])->name('sendAlert');
 });
+Route::group([
+    'prefix' => config('asay-components.routes.prefix') . '/replies',
+    'as' => config('asay-components.routes.as') . '.replies.',
+], function () {
+    Route::post('getConfig', [AlertsController::class, 'getConfig'])->name('getConfig');
+    Route::post('getAlerts', [AlertsController::class, 'getAlerts'])->name('getAlerts');
+    Route::post('getReceivers', [AlertsController::class, 'getReceivers'])->name('getReceivers');
+    Route::post('sendAlert', [AlertsController::class, 'sendAlert'])->name('sendAlert');
+});

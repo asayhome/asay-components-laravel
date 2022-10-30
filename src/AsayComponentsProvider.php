@@ -9,6 +9,7 @@ class AsayComponentsProvider extends ServiceProvider
 
     public function boot()
     {
+        $this->loadRoutesFrom(__DIR__ . '/web.php');
         $this->publishes([
             __DIR__ . '/../config/asay-components.php' => config_path('asay-components.php'),
         ]);

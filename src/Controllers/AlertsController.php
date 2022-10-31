@@ -8,6 +8,7 @@ use AsayHome\AsayComponents\Models\UserModel;
 use AsayHome\AsayHelpers\Helpers\AlertsHelper;
 use AsayHome\AsayHelpers\Helpers\TimestampHelper;
 use AsayHome\AsayNotificationsManager\Helpers\AsayNotificationsHelper;
+use AsayHome\AsayNotificationsManager\Models\AsayNotifyLogs;
 use AsayHome\AsayNotificationsManager\Models\AsayNotifySender;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
@@ -78,6 +79,30 @@ class AlertsController
         return response([
             'success' => true,
             'receivers' => $receivers
+        ]);
+    }
+    public function makeAlertMessageAsRead()
+    {
+        $notify = AsayNotifySender::where('id', Request::get('id'))->first();
+        if ($notify) {
+            $notify->status = AsayNotificationsHelper::$notify_sent_status;
+            $notify->read_at = date('Y-m-d H:i:s');
+            $notify->save();
+        }
+        return response([
+            'success' => true,
+            'msg' => __('Saved successfully')
+        ]);
+    }
+    public function deleteAlertMessage()
+    {
+        $notify = AsayNotifySender::where('id', Request::get('id'))->first();
+        if ($notify) {
+            $notify->delete();
+        }
+        return response([
+            'success' => true,
+            'msg' => __('Deleted successfully')
         ]);
     }
     public function sendAlert()

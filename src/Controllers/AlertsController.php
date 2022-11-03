@@ -10,6 +10,7 @@ use AsayHome\AsayHelpers\Helpers\TimestampHelper;
 use AsayHome\AsayNotificationsManager\Helpers\AsayNotificationsHelper;
 use AsayHome\AsayNotificationsManager\Models\AsayNotifyLogs;
 use AsayHome\AsayNotificationsManager\Models\AsayNotifySender;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -73,9 +74,18 @@ class AlertsController
     }
     public function getReceivers()
     {
-        $receivers = UserModel::when(Request::get('receiversIds') && !in_array('*', Request::get('receiversIds')), function ($query) {
+        $users = config('asay-components.userModelInstance');
+        $receivers = $users::when(Request::get('receiversIds') && Request::get('receiversIds') != '*' && !in_array('*', Request::get('receiversIds')), function ($query) {
             $query->whereIn('id', Request::get('receiversIds'));
-        })->select(['id', 'first_name', 'last_name'])->get();
+        })->when(Request::get('selected_roles'), function ($query) {
+            $query->whereHas('roles', function ($role) {
+                if (is_array(Request::get('selected_roles'))) {
+                    $role->whereIn('name', Request::get('selected_roles'));
+                } else {
+                    $role->where('name', Request::get('selected_roles'));
+                }
+            });
+        })->select(['id', DB::raw('concat(first_name," ",last_name) as name')])->get();
         return response([
             'success' => true,
             'receivers' => $receivers
@@ -115,16 +125,17 @@ class AlertsController
             'received_by' => 'required|array',
         ];
 
+
         if (Request::get('sendingType') == 'later') {
             $roles['sending_time'] = 'required';
         }
         if (
             is_array(Request::get('received_by')) &&
             in_array('*', Request::get('received_by')) &&
-            Request::get('model') == 'users'
+            Request::get('group') == 'users'
         ) {
             $roles['selected_roles'] = 'required';
-            $roles['statuses'] = 'required';
+            // $roles['statuses'] = 'required';
         }
 
 
@@ -151,11 +162,12 @@ class AlertsController
         if (!in_array('*', Request::get('received_by'))) {
             $received_by = Request::get('received_by');
         } else {
-            if (Request::get('model') == 'users') {
-                $query = UserModel::where('id', '<>', Request::get('sender_id'));
-                if (is_array(Request::get('statuses')) && sizeof(Request::get('statuses')) > 0) {
-                    $query->whereIn('account_status', Request::get('statuses'));
-                }
+            if (Request::get('group') == 'users') {
+                $users = config('asay-components.userModelInstance');
+                $query =  $users::where('id', '<>', Request::get('sender_id'));
+                // if (is_array(Request::get('statuses')) && sizeof(Request::get('statuses')) > 0) {
+                //     $query->whereIn('account_status', Request::get('statuses'));
+                // }
                 if (is_array(Request::get('selected_roles')) && sizeof(Request::get('selected_roles')) > 0) {
                     $query->whereHas('roles', function ($role) {
                         $role->whereIn('name', Request::get('selected_roles'));
@@ -184,7 +196,7 @@ class AlertsController
                 'body' =>  Request::get('message'),
                 'drivers' => Request::get('sending_by'),
                 'template' => 'general',
-                'sending_time' => date('Y-m-d H:i:s'),
+                'sending_time' => $sending_time,
                 // aditional params
                 'aditional_params' => [],
             ];

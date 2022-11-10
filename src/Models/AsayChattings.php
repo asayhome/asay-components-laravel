@@ -18,7 +18,7 @@ class AsayChattings extends Model
         'sender_id',
         'receiver_id',
         'message',
-        'atachments'
+        'attachments'
     ];
 
     public function sender()

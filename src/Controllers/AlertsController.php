@@ -3,16 +3,14 @@
 namespace AsayHome\AsayComponents\Controllers;
 
 use App\Helpers\PermissionsHelper;
-use AsayHome\AsayComponents\Models\AsayChattings;
 use AsayHome\AsayComponents\Models\UserModel;
 use AsayHome\AsayHelpers\Helpers\AlertsHelper;
 use AsayHome\AsayHelpers\Helpers\TimestampHelper;
-use AsayHome\AsayNotificationsManager\Helpers\AsayNotificationsHelper;
-use AsayHome\AsayNotificationsManager\Models\AsayNotifyLogs;
-use AsayHome\AsayNotificationsManager\Models\AsayNotifySender;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
+use Tik\AppSettings\Helpers\NotificationsHelper;
+use Tik\AppSettings\Models\NotifySender;
 
 class AlertsController
 {
@@ -40,7 +38,7 @@ class AlertsController
     {
         $sender = UserModel::where('id', Request::get('user_id'))->first();
         if (in_array($sender->id, config('asay-components.admin_users_ids'))) {
-            $ids = AsayNotifySender::where('group', Request::get('group'))
+            $ids = NotifySender::where('group', Request::get('group'))
                 ->where('group_id', Request::get('group_id'))
                 ->orderBy('id', 'desc')
                 ->cursor()->filter(function ($message) use ($sender) {
@@ -48,9 +46,9 @@ class AlertsController
                         in_array($sender->id, json_decode($message->receiver_ids, true)));
                 })->pluck('id');
         } else {
-            $ids = AsayNotifySender::where('group', Request::get('group'))
+            $ids = NotifySender::where('group', Request::get('group'))
                 ->where('group_id', request('group_id'))
-                ->where('status',  AsayNotificationsHelper::$notify_sent_status)
+                ->where('status',  NotificationsHelper::$notify_sent_status)
                 ->orderBy('id', 'desc')
                 ->cursor()->filter(function ($message) use ($sender) {
                     return ($message->sender_id == $sender->id ||
@@ -58,7 +56,7 @@ class AlertsController
                 })->pluck('id');
         }
 
-        $messages = AsayNotifySender::whereIn('id', $ids->toArray())
+        $messages = NotifySender::whereIn('id', $ids->toArray())
             ->orderBy('id', 'desc')
             ->paginate(3, ['*'], 'page', Request::get('pageNo'))
             ->through(function ($message) {
@@ -93,9 +91,9 @@ class AlertsController
     }
     public function makeAlertMessageAsRead()
     {
-        $notify = AsayNotifySender::where('id', Request::get('id'))->first();
+        $notify = NotifySender::where('id', Request::get('id'))->first();
         if ($notify) {
-            $notify->status = AsayNotificationsHelper::$notify_sent_status;
+            $notify->status = NotificationsHelper::$notify_sent_status;
             $notify->read_at = date('Y-m-d H:i:s');
             $notify->save();
         }
@@ -106,7 +104,7 @@ class AlertsController
     }
     public function deleteAlertMessage()
     {
-        $notify = AsayNotifySender::where('id', Request::get('id'))->first();
+        $notify = NotifySender::where('id', Request::get('id'))->first();
         if ($notify) {
             $notify->delete();
         }
@@ -200,7 +198,7 @@ class AlertsController
                 // aditional params
                 'aditional_params' => [],
             ];
-            AsayNotificationsHelper::registerNotify($data);
+            NotificationsHelper::registerNotify($data);
             $isSend = true;
             $msg = __('Saved, transmission will complete at specified time');
         } else {

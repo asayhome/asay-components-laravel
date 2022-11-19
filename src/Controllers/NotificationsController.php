@@ -2,11 +2,9 @@
 
 namespace AsayHome\AsayComponents\Controllers;
 
-use AsayHome\AsayComponents\Models\AsayReplies;
-use AsayHome\AsayNotificationsManager\Helpers\AsayNotificationsHelper;
-use AsayHome\AsayNotificationsManager\Models\AsayNotifyLogs;
-use AsayHome\AsayNotificationsManager\Models\AsayNotifySender;
 use Illuminate\Support\Facades\Request;
+use Tik\AppSettings\Helpers\NotificationsHelper;
+use Tik\AppSettings\Models\NotifyLogs;
 use Yajra\DataTables\Facades\DataTables;
 
 class NotificationsController
@@ -14,11 +12,11 @@ class NotificationsController
 
     public function getNotificationsLogs()
     {
-        // $notify = AsayNotifySender::where('group', Request::get('group'))
+        // $notify = NotifySender::where('group', Request::get('group'))
         //     ->where('group_id', Request::get('groupId'))
         //     ->first();
         // dd(Request::all());
-        $logs = AsayNotifyLogs::where('notify_id',  Request::get('notifyId'))
+        $logs = NotifyLogs::where('notify_id',  Request::get('notifyId'))
             ->when((Request::get('notify_type') && Request::get('notify_type') != '*'), fn ($query, $type) => $query->where('driver', Request::get('notify_type')))
             ->when(Request::get('status'), fn ($query, $type) => $query->where('status', $type == 'success' ? 1 : 0))
             ->orderBy('id', 'desc');
@@ -49,9 +47,9 @@ class NotificationsController
                 return  __(ucfirst($type));
             })
             ->addColumn('status', function ($notifyLog) {
-                if ($notifyLog->status == AsayNotificationsHelper::$notify_log_wait_status) {
+                if ($notifyLog->status == NotificationsHelper::$notify_log_wait_status) {
                     return '<span style="color: blue">' . __('Waiting to send') . '</span>';
-                } else if ($notifyLog->status == AsayNotificationsHelper::$notify_log_sent_status) {
+                } else if ($notifyLog->status == NotificationsHelper::$notify_log_sent_status) {
                     return '<span style="color: green">' . __('Success') . '</span>';
                 } else {
                     return '<span style="color: red">' . __('Fail') . '</span>';

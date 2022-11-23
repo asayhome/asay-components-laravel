@@ -196,7 +196,7 @@ class AlertsController
                 'template' => 'general',
                 'sending_time' => $sending_time,
                 // aditional params
-                'aditional_params' => [],
+                'additional_params' => [],
             ];
             NotificationsHelper::registerNotify($data);
             $isSend = true;

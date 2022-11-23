@@ -23,6 +23,6 @@ class AsayChattings extends Model
 
     public function sender()
     {
-        return $this->hasOne(UserModel::class, 'id', 'sender_id');
+        return $this->hasOne(UserModel::class, 'id', 'sender_id')->withTrashed();
     }
 }

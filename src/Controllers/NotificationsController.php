@@ -16,9 +16,9 @@ class NotificationsController
         //     ->where('group_id', Request::get('groupId'))
         //     ->first();
         // dd(Request::all());
-        $logs = NotifyLogs::where('notify_id',  Request::get('notifyId'))
-            ->when((Request::get('notify_type') && Request::get('notify_type') != '*'), fn ($query, $type) => $query->where('driver', Request::get('notify_type')))
-            ->when(Request::get('status'), fn ($query, $type) => $query->where('status', $type == 'success' ? 1 : 0))
+        $logs = NotifyLogs::where('notify_id', Request::get('notifyId'))
+            ->when((Request::get('notify_type') && Request::get('notify_type') != '*'), fn($query, $type) => $query->where('driver', Request::get('notify_type')))
+            ->when(Request::get('status'), fn($query, $type) => $query->where('status', $type == 'success' ? 1 : 0))
             ->orderBy('id', 'desc');
 
         return DataTables::of($logs->orderBy('id', 'desc')->get())
@@ -44,7 +44,7 @@ class NotificationsController
                 } else if ($notifyLog->driver == 'mail') {
                     $type = 'email';
                 }
-                return  __(ucfirst($type));
+                return __(ucfirst($type));
             })
             ->addColumn('status', function ($notifyLog) {
                 if ($notifyLog->status == NotificationsHelper::$notify_log_wait_status) {

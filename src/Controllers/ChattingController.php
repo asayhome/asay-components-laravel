@@ -21,6 +21,7 @@ class ChattingController
             'messages' => $messages
         ]);
     }
+
     public function getUsers()
     {
         $ids = AsayChattings::where('group', Request::get('group'))
@@ -32,6 +33,7 @@ class ChattingController
             'users' => $users
         ]);
     }
+
     public function sendMessage()
     {
         Request::validate([

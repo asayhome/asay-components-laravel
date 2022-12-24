@@ -16,6 +16,7 @@ class RepliesController
             'messages' => $messages
         ]);
     }
+
     public function store()
     {
         $roles = [
@@ -49,6 +50,7 @@ class RepliesController
 
         return response()->json(['success' => true, 'msg' => __('Saved successfully')]);
     }
+
     public function destroy()
     {
         // dd(Request::get('id'));

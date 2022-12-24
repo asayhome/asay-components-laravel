@@ -34,6 +34,7 @@ class AlertsController
             'message_statuses' => [AlertsHelper::$message_statuses_wait, AlertsHelper::$message_statuses_sent],
         ]);
     }
+
     public function getAlerts()
     {
         $sender = UserModel::where('id', Request::get('user_id'))->first();
@@ -48,7 +49,7 @@ class AlertsController
         } else {
             $ids = NotifySender::where('group', Request::get('group'))
                 ->where('group_id', request('group_id'))
-                ->where('status',  NotificationsHelper::$notify_sent_status)
+                ->where('status', NotificationsHelper::$notify_sent_status)
                 ->orderBy('id', 'desc')
                 ->cursor()->filter(function ($message) use ($sender) {
                     return ($message->sender_id == $sender->id ||
@@ -70,6 +71,7 @@ class AlertsController
             'messages' => $messages,
         ]);
     }
+
     public function getReceivers()
     {
         $users = config('asay-components.userModelInstance');
@@ -89,6 +91,7 @@ class AlertsController
             'receivers' => $receivers
         ]);
     }
+
     public function makeAlertMessageAsRead()
     {
         $notify = NotifySender::where('id', Request::get('id'))->first();
@@ -102,6 +105,7 @@ class AlertsController
             'msg' => __('Saved successfully')
         ]);
     }
+
     public function deleteAlertMessage()
     {
         $notify = NotifySender::where('id', Request::get('id'))->first();
@@ -113,6 +117,7 @@ class AlertsController
             'msg' => __('Deleted successfully')
         ]);
     }
+
     public function sendAlert()
     {
         $roles = [
@@ -162,7 +167,7 @@ class AlertsController
         } else {
             if (Request::get('group') == 'users') {
                 $users = config('asay-components.userModelInstance');
-                $query =  $users::where('id', '<>', Request::get('sender_id'));
+                $query = $users::where('id', '<>', Request::get('sender_id'));
                 // if (is_array(Request::get('statuses')) && sizeof(Request::get('statuses')) > 0) {
                 //     $query->whereIn('account_status', Request::get('statuses'));
                 // }
@@ -178,8 +183,6 @@ class AlertsController
         }
 
 
-
-
         if (Request::get('action') == 'getCount') {
             return response()->json(['success' => true, 'count' => sizeof($received_by)]);
         }
@@ -188,10 +191,10 @@ class AlertsController
             $data = [
                 'group' => Request::get('group'),
                 'group_id' => Request::get('group_id'),
-                'sender_id' =>  Request::get('sender_id'), // admin user
+                'sender_id' => Request::get('sender_id'), // admin user
                 'receiver_ids' => $received_by,
                 'subject' => Request::get('title'),
-                'body' =>  Request::get('message'),
+                'body' => Request::get('message'),
                 'drivers' => Request::get('sending_by'),
                 'template' => 'general',
                 'sending_time' => $sending_time,
@@ -207,7 +210,7 @@ class AlertsController
 
         return response()->json([
             'success' => $isSend,
-            'msg' =>    $msg
+            'msg' => $msg
         ]);
     }
 }

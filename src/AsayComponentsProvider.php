@@ -17,6 +17,7 @@ class AsayComponentsProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__ . '/../lang', 'asay-components');
         // $this->loadViewsFrom(__DIR__ . '/../resources/views', 'asay-components');
     }
+
     public function register()
     {
         $this->mergeConfigFrom(

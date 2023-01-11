@@ -85,7 +85,9 @@ class AlertsController
                     $role->where('name', Request::get('selected_roles'));
                 }
             });
-        })->select(['id', DB::raw('concat(first_name," ",last_name) as name')])->get();
+        })
+            ->select(['id', DB::raw('concat(first_name," ",last_name) as name')])
+            ->get();
         return response([
             'success' => true,
             'receivers' => $receivers

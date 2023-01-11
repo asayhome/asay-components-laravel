@@ -16,9 +16,10 @@ class NotificationsController
         //     ->where('group_id', Request::get('groupId'))
         //     ->first();
         // dd(Request::all());
-        $logs = NotifyLogs::where('notify_id', Request::get('notifyId'))
-            ->when((Request::get('notify_type') && Request::get('notify_type') != '*'), fn($query, $type) => $query->where('driver', Request::get('notify_type')))
-            ->when(Request::get('status'), fn($query, $type) => $query->where('status', $type == 'success' ? 1 : 0))
+        $logs = NotifyLogs::with(['receiver'])
+            ->where('notify_id', Request::get('notifyId'))
+            ->when((Request::get('notify_type') && Request::get('notify_type') != '*'), fn ($query, $type) => $query->where('driver', Request::get('notify_type')))
+            ->when(Request::get('status'), fn ($query, $type) => $query->where('status', $type == 'success' ? 1 : 0))
             ->orderBy('id', 'desc');
 
         return DataTables::of($logs->orderBy('id', 'desc')->get())
@@ -35,7 +36,11 @@ class NotificationsController
                 return $notifyLog->notify->title;
             })
             ->addColumn('data', function ($notifyLog) {
-                return json_decode($notifyLog->notify->data, true);
+                if (is_array($notifyLog->notify->data)) {
+                    return $notifyLog->notify->data;
+                } else {
+                    return json_decode($notifyLog->notify->data, true);
+                }
             })
             ->addColumn('notify_type', function ($notifyLog) {
                 $type = $notifyLog->driver;

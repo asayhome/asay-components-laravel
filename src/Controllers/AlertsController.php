@@ -86,7 +86,7 @@ class AlertsController
                 }
             });
         })
-            ->select(['id', DB::raw('concat(first_name," ",last_name) as name')])
+            ->select(['id', 'name'])
             ->get();
         return response([
             'success' => true,

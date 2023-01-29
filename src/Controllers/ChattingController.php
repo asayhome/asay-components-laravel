@@ -46,7 +46,9 @@ class ChattingController
         ], [], [
             'message' => __('Message')
         ]);
-        AsayChattings::create([
+
+
+        $message = AsayChattings::create([
             'group' => Request::get('group'),
             'group_id' => Request::get('group_id'),
             'sender_id' => Request::get('sender_id'),
@@ -54,6 +56,18 @@ class ChattingController
             'message' => Request::get('message'),
             // 'atachments'
         ]);
+
+        if (Request::hasFile('attachments')) {
+            $i = 0;
+            $paths = [];
+            foreach (Request::file('attachments') as $file) {
+                $paths[$i] = $file->store(Request::get('group') . '/' . Request::get('group_id'), 'public');
+                $i++;
+            }
+            $message->attachments = json_encode($paths);
+            $message->save();
+        }
+
         return back()->with(['msg' => __('Sent successfully')]);
     }
 }

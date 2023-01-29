@@ -21,8 +21,18 @@ class AsayChattings extends Model
         'attachments'
     ];
 
+    public function getAttachmentsAttribute($value)
+    {
+        if ($value) {
+            return json_decode($value, true);
+        }
+        return null;
+    }
+
     public function sender()
     {
         return $this->hasOne(UserModel::class, 'id', 'sender_id')->withTrashed();
     }
+
+    public $hidden = ['deleted_at'];
 }

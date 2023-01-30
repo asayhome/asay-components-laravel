@@ -203,6 +203,7 @@ class AlertsController
                 // aditional params
                 'additional_params' => [],
             ];
+
             NotificationsHelper::registerNotify($data);
             $isSend = true;
             $msg = __('Saved, transmission will complete at specified time');

@@ -4,12 +4,11 @@ namespace AsayHome\AsayComponents\Controllers;
 
 use App\Helpers\PermissionsHelper;
 use AsayHome\AsayComponents\Models\UserModel;
-use AsayHome\AsayHelpers\Helpers\AlertsHelper;
-use AsayHome\AsayHelpers\Helpers\TimestampHelper;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
+use Tik\AppSettings\Helpers\AlertsHelper;
 use Tik\AppSettings\Helpers\NotificationsHelper;
+use Tik\AppSettings\Helpers\TimestampHelper;
 use Tik\AppSettings\Models\NotifySender;
 
 class AlertsController
